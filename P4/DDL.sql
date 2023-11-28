@@ -23,12 +23,14 @@ CREATE TABLE SANCTUARY (
 CREATE NONCLUSTERED INDEX IX_Sanctuary_Name
 ON SANCTUARY (Name);
 
+-- Execute CREATE FUNCTION dbo.CalculateAge before this
 
 CREATE TABLE EMPLOYEE (
     Employee_ID INT NOT NULL IDENTITY(1,1),
     Employee_Name VARCHAR(255) NOT NULL,
     Experience_Years INT CHECK (Experience_Years >= 1),
-    Date_Joined DATE NOT NULL,
+    Date_Joined DATE NOT NULL CHECK (DATEDIFF(YEAR, Date_Joined, GETDATE()) >= 18),
+    Age AS dbo.CalculateAge(Date_Joined) ,
     CONSTRAINT EmployeeID_PK PRIMARY KEY (Employee_ID)
 );
 -- Index for the WHERE clause in EMPLOYEE table
