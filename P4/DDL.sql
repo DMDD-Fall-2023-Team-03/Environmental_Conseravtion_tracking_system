@@ -322,3 +322,9 @@ ON WILDLIFE_HABITAT (Date_of_Localisation);
 
 
 
+
+
+-------ALTER Tourist --------
+ALTER TABLE Tourist
+ADD CONSTRAINT CK_ValidEmail
+CHECK (Email LIKE '%_@__%._%');
