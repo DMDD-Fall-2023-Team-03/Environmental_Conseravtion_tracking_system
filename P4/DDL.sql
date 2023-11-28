@@ -202,14 +202,16 @@ CREATE TABLE TOURIST (
     Guide_Id INT,
     Sanctuary_Id INT,
     Tourist_Name VARCHAR(255) NOT NULL,
-    Phone_Number VARCHAR(20) CHECK (Phone_Number LIKE '^[0-9]+$'),
-    Email VARCHAR(255) CHECK (Email LIKE '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+.[A-Z|a-z]{2,4}$'),
+    Phone_Number VARCHAR(10) CHECK (LEN(Phone_Number) = 10 AND Phone_Number NOT LIKE '%[^0-9]%'),
+    Email VARCHAR(255),
     FOREIGN KEY (Guide_Id) REFERENCES GUIDE(Guide_Id),
     FOREIGN KEY (Sanctuary_Id) REFERENCES SANCTUARY(Sanctuary_Id)
 );
 -- Index for the WHERE clause in TOURIST table
 CREATE NONCLUSTERED INDEX IX_Tourist_Tourist_Name
 ON TOURIST (Tourist_Name);
+
+
 
 CREATE TABLE VISITS (
     Visit_Id INT PRIMARY KEY,
@@ -310,3 +312,7 @@ CREATE TABLE WILDLIFE_HABITAT (
 -- Create a non-clustered index on Date_of_Localisation column
 CREATE NONCLUSTERED INDEX IX_Wildlife_Habitat_Date_of_Localisation
 ON WILDLIFE_HABITAT (Date_of_Localisation);
+
+
+
+
