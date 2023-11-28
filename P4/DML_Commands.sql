@@ -36,33 +36,34 @@ VALUES
 
 
 ----EMPLOYEE
-INSERT INTO EMPLOYEE (Employee_Name, Experience_Years, Date_Joined) 
+INSERT INTO EMPLOYEE (Employee_Name, Experience_Years, Date_Joined, Date_Of_Birth) 
 VALUES 
-('John Smith', 5, '2018-01-10'),
-('Emily Johnson', 3, '2020-04-15'),
-('Michael Brown', 7, '2016-05-30'),
-('Jessica Davis', 2, '2021-02-20'),
-('Matthew Wilson', 8, '2015-08-11'),
-('Ashley Miller', 4, '2019-07-22'),
-('Christopher Moore', 10, '2013-03-18'),
-('Amanda Taylor', 6, '2017-11-10'),
-('Elizabeth Anderson', 9, '2014-12-05'),
-('Brian Thomas', 1, '2022-06-01'),
-('Sophia Jackson', 3, '2020-09-14'),
-('Ethan White', 2, '2021-08-23'),
-('Madison Harris', 5, '2018-01-07'),
-('Alexander Martin', 6, '2017-04-03'),
-('Olivia Thompson', 4, '2019-10-16'),
-('William Garcia', 7, '2016-02-11'),
-('Isabella Martinez', 8, '2015-05-28'),
-('David Rodriguez', 1, '2022-07-04'),
-('Charlotte Lee', 2, '2021-09-15'),
-('Benjamin Walker', 3, '2020-12-21'),
-('Abigail Hall', 9, '2014-10-30'),
-('Daniel Allen', 5, '2018-06-19'),
-('Emma Young', 4, '2019-03-23'),
-('Lucas Hernandez', 6, '2017-08-09'),
-('Mia King', 7, '2016-11-01');
+('John Smith', 5, '2018-01-10', '1998-04-19'),
+('Emily Johnson', 3, '2020-04-15', '1997-04-15'),
+('Michael Brown', 7, '2016-05-30', '1999-05-30'),
+('Jessica Davis', 2, '2021-02-20', '1999-02-20'),
+('Matthew Wilson', 8, '2015-08-11', '1997-08-11'),
+('Ashley Miller', 4, '2019-07-22', '2001-07-22'),
+('Christopher Moore', 10, '2013-03-18', '1992-03-18'),
+('Amanda Taylor', 6, '2017-11-10', '1999-11-10'),
+('Elizabeth Anderson', 9, '2014-12-05', '1995-12-05'),
+('Brian Thomas', 1, '2022-06-01', '2004-06-01'),
+('Sophia Jackson', 3, '2020-09-14', '2001-09-14'),
+('Ethan White', 2, '2021-08-23', '1999-08-23'),
+('Madison Harris', 5, '2018-01-07', '1999-01-07'),
+('Alexander Martin', 6, '2017-04-03', '2000-04-03'),
+('Olivia Thompson', 4, '2019-10-16', '2001-10-16'),
+('William Garcia', 7, '2016-02-11', '1999-02-11'),
+('Isabella Martinez', 8, '2015-05-28', '1997-05-28'),
+('David Rodriguez', 1, '2022-07-04', '2004-07-04'),
+('Charlotte Lee', 2, '2021-09-15', '1999-09-15'),
+('Benjamin Walker', 3, '2020-12-21', '2002-12-21'),
+('Abigail Hall', 9, '2014-10-30', '1995-10-30'),
+('Daniel Allen', 5, '2018-06-19', '2000-06-19'),
+('Emma Young', 4, '2019-03-23', '2001-03-23'),
+('Lucas Hernandez', 6, '2017-08-09', '2001-08-09'),
+('Mia King', 7, '2016-11-01', '1999-11-01');
+
 
 
 ----CARETAKER

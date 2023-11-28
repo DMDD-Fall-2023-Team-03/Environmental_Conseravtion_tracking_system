@@ -22,15 +22,13 @@ BEGIN
     RETURN @Suitable
 END;
 
-ALTER TABLE HABITAT
-ADD suitability AS dbo.IsHabitatSuitable(PH_Level, Air_Purity, Humidity, Temperature) ;
 
 -- Add a check constraint using the UDF to ensure habitat suitability
-ALTER TABLE HABITAT
-ADD CONSTRAINT CHK_HabitatSuitability CHECK (dbo.IsHabitatSuitable(PH_Level, Air_Purity, Humidity, Temperature) = 1);
+-- ALTER TABLE HABITAT
+-- ADD CONSTRAINT CHK_HabitatSuitability CHECK (dbo.IsHabitatSuitable(PH_Level, Air_Purity, Humidity, Temperature) = 1);
 
 
 -- Use the UDF in a query to find suitable habitats
-SELECT Habitat_Id, Habitat_Type
+SELECT *
 FROM HABITAT
 WHERE dbo.IsHabitatSuitable(PH_Level, Air_Purity, Humidity, Temperature) = 1;

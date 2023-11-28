@@ -29,8 +29,9 @@ CREATE TABLE EMPLOYEE (
     Employee_ID INT NOT NULL IDENTITY(1,1),
     Employee_Name VARCHAR(255) NOT NULL,
     Experience_Years INT CHECK (Experience_Years >= 1),
-    Date_Joined DATE NOT NULL CHECK (DATEDIFF(YEAR, Date_Joined, GETDATE()) >= 18),
-    Age AS dbo.CalculateAge(Date_Joined) ,
+    Date_Joined DATE NOT NULL ,
+    Date_Of_Birth DATE NOT NULL CHECK (DATEDIFF(YEAR, Date_Of_Birth, GETDATE()) >= 18),
+    Age AS dbo.CalculateAge(Date_Of_Birth) ,
     CONSTRAINT EmployeeID_PK PRIMARY KEY (Employee_ID)
 );
 -- Index for the WHERE clause in EMPLOYEE table
@@ -83,6 +84,7 @@ CREATE TABLE COACHES (
 CREATE NONCLUSTERED INDEX IX_Coaches_LEVEL_OF_COACHING
 ON COACHES (LEVEL_OF_COACHING);
 
+-- Execute CREATE FUNCTION dbo.IsHabitatSuitable before this
 
 CREATE TABLE HABITAT (
     Habitat_Id INT PRIMARY KEY,
@@ -94,8 +96,10 @@ CREATE TABLE HABITAT (
     Air_Purity DECIMAL(5, 2) CHECK (Air_Purity >= 0),
     Humidity DECIMAL(5, 2) CHECK (Humidity >= 0),
     Temperature DECIMAL(5, 2) CHECK (Temperature >= 0),
+    suitability AS CASE WHEN dbo.IsHabitatSuitable(PH_Level, Air_Purity, Humidity, Temperature) = 1 THEN 'SUITABLE' ELSE 'UNSUITABLE' END,
     FOREIGN KEY (Sanctuary_Id) REFERENCES SANCTUARY(Sanctuary_Id)
 );
+
 -- Index for the WHERE clause in HABITAT table
 CREATE NONCLUSTERED INDEX IX_Habitat_Habitat_Type
 ON HABITAT (Habitat_Type);
