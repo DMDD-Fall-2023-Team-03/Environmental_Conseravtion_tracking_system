@@ -11,6 +11,14 @@ GO
 USE [WildlifeSanctuary]
 GO
 
+CREATE MASTER KEY ENCRYPTION BY PASSWORD = 'Wildlife@2023';
+
+CREATE CERTIFICATE EnvCert WITH SUBJECT = 'Environment Conservatory Encryption';
+
+CREATE SYMMETRIC KEY EnvSymmetricKey
+WITH ALGORITHM = AES_256
+ENCRYPTION BY CERTIFICATE EnvCert;
+
 
 -- Create tables for RITIK
 CREATE TABLE SANCTUARY (
@@ -24,14 +32,26 @@ CREATE NONCLUSTERED INDEX IX_Sanctuary_Name
 ON SANCTUARY (Name);
 
 -- Execute CREATE FUNCTION dbo.CalculateAge before this
+CREATE FUNCTION dbo.CalculateAge (@DateOfBirth DATE)
+RETURNS INT
+AS
+BEGIN
+    DECLARE @Age INT
+
+    SET @Age = DATEDIFF(YEAR, @DateOfBirth, GETDATE())
+
+    RETURN @Age
+END;
 
 CREATE TABLE EMPLOYEE (
     Employee_ID INT NOT NULL IDENTITY(1,1),
     Employee_Name VARCHAR(255) NOT NULL,
     Experience_Years INT CHECK (Experience_Years >= 1),
-    Date_Joined DATE NOT NULL ,
+    Date_Joined DATE NOT NULL,
     Date_Of_Birth DATE NOT NULL CHECK (DATEDIFF(YEAR, Date_Of_Birth, GETDATE()) >= 18),
-    Age AS dbo.CalculateAge(Date_Of_Birth) ,
+    Sex VARCHAR(10) NOT NULL CHECK (Sex IN ('Male', 'Female', 'Other')), -- Added check constraint for Sex
+    Age AS dbo.CalculateAge(Date_Of_Birth),
+    SSN VARBINARY(8000),
     CONSTRAINT EmployeeID_PK PRIMARY KEY (Employee_ID)
 );
 -- Index for the WHERE clause in EMPLOYEE table
@@ -85,6 +105,27 @@ CREATE NONCLUSTERED INDEX IX_Coaches_LEVEL_OF_COACHING
 ON COACHES (LEVEL_OF_COACHING);
 
 -- Execute CREATE FUNCTION dbo.IsHabitatSuitable before this
+
+CREATE FUNCTION dbo.IsHabitatSuitable (
+    @PH_Level DECIMAL(4, 2),
+    @Air_Purity DECIMAL(5, 2),
+    @Humidity DECIMAL(5, 2),
+    @Temperature DECIMAL(5, 2)
+)
+RETURNS BIT
+AS
+BEGIN
+    DECLARE @Suitable BIT
+
+    -- Define criteria for habitat suitability
+    IF @PH_Level >= 6.5 AND @Air_Purity >= 80 AND @Humidity BETWEEN 30 AND 70 AND @Temperature BETWEEN 20 AND 30
+        SET @Suitable = 1; -- Suitable
+    ELSE
+        SET @Suitable = 0; -- Not Suitable
+
+    RETURN @Suitable
+END;
+
 
 CREATE TABLE HABITAT (
     Habitat_Id INT PRIMARY KEY,

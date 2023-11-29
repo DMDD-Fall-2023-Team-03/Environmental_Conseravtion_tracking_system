@@ -15,110 +15,94 @@ VALUES
   (7, 'Majestic Wilderness', 'Plateau Zone', 2200.40),
   (8, 'Tranquil Oasis', 'Desert Area', 1700.60),
   (9, 'Eco Harmony Reserve', 'Tropical Rainforest', 2800.20),
-  (10, 'Evergreen Wildlife Preserve', 'Island Oasis', 1900.80),
-  (11, 'Golden Meadows Wildlife Sanctuary', 'Grassland Plains', 1400.45),
-  (12, 'Pristine Pine Forest', 'Northern Woodlands', 2600.55),
-  (13, 'Lush Canyon Retreat', 'Valley of Springs', 3200.90),
-  (14, 'Crystal Clear Lake Wildlife Sanctuary', 'Lakefront Area', 2300.35),
-  (15, 'Sunrise Savannah Reserve', 'Savannah Grasslands', 2000.25),
-  (16, 'Mystic Mountain Wildlife Haven', 'Mountain Summit', 1800.70),
-  (17, 'Whispering Willow Wildlife Sanctuary', 'Wooded Glade', 1400.80),
-  (18, 'Riverside Oasis', 'Riverbank Area', 2100.95),
-  (19, 'Diverse Ecosystem Sanctuary', 'Biosphere Reserve', 2700.40),
-  (20, 'Aurora Boreal Wildlife Refuge', 'Polar Region', 1600.30),
-  (21, 'Enchanted Everglades', 'Wetland Area', 1900.65),
-  (22, 'Crimson Cliff Wildlife Sanctuary', 'Cliffside Region', 2300.20),
-  (23, 'Golden Horizon Wildlife Reserve', 'Golden Sands', 2600.75),
-  (24, 'Eternal Iceberg Wildlife Sanctuary', 'Antarctic Zone', 3100.80),
-  (25, 'Celestial Cloud Forest', 'High Altitude Plateau', 2800.50);
-
-
+  (10, 'Evergreen Wildlife Preserve', 'Island Oasis', 1900.80);
 
 
 ----EMPLOYEE
-INSERT INTO EMPLOYEE (Employee_Name, Experience_Years, Date_Joined, Date_Of_Birth) 
+
+-- ALTER TABLE EMPLOYEE
+-- DROP CONSTRAINT UQ__EMPLOYEE__CA1E8E3C974707EA;
+
+-- ALTER TABLE EMPLOYEE
+-- ALTER COLUMN SSN VARBINARY(8000);
+
+-- ALTER TABLE EMPLOYEE
+-- ADD SSN_NEW VARBINARY(8000);
+-- UPDATE EMPLOYEE
+-- SET SSN_NEW = CONVERT(VARBINARY(8000), SSN);
+
+-- ALTER TABLE EMPLOYEE
+-- DROP COLUMN SSN;
+
+-- EXEC sp_rename 'EMPLOYEE.SSN_NEW', 'SSN', 'COLUMN';
+
+OPEN SYMMETRIC KEY EnvSymmetricKey
+   DECRYPTION BY CERTIFICATE EnvCert;
+
+INSERT INTO EMPLOYEE (Employee_Name, Experience_Years, Date_Joined, Date_Of_Birth, Sex, SSN) 
 VALUES 
-('John Smith', 5, '2018-01-10', '1998-04-19'),
-('Emily Johnson', 3, '2020-04-15', '1997-04-15'),
-('Michael Brown', 7, '2016-05-30', '1999-05-30'),
-('Jessica Davis', 2, '2021-02-20', '1999-02-20'),
-('Matthew Wilson', 8, '2015-08-11', '1997-08-11'),
-('Ashley Miller', 4, '2019-07-22', '2001-07-22'),
-('Christopher Moore', 10, '2013-03-18', '1992-03-18'),
-('Amanda Taylor', 6, '2017-11-10', '1999-11-10'),
-('Elizabeth Anderson', 9, '2014-12-05', '1995-12-05'),
-('Brian Thomas', 1, '2022-06-01', '2004-06-01'),
-('Sophia Jackson', 3, '2020-09-14', '2001-09-14'),
-('Ethan White', 2, '2021-08-23', '1999-08-23'),
-('Madison Harris', 5, '2018-01-07', '1999-01-07'),
-('Alexander Martin', 6, '2017-04-03', '2000-04-03'),
-('Olivia Thompson', 4, '2019-10-16', '2001-10-16'),
-('William Garcia', 7, '2016-02-11', '1999-02-11'),
-('Isabella Martinez', 8, '2015-05-28', '1997-05-28'),
-('David Rodriguez', 1, '2022-07-04', '2004-07-04'),
-('Charlotte Lee', 2, '2021-09-15', '1999-09-15'),
-('Benjamin Walker', 3, '2020-12-21', '2002-12-21'),
-('Abigail Hall', 9, '2014-10-30', '1995-10-30'),
-('Daniel Allen', 5, '2018-06-19', '2000-06-19'),
-('Emma Young', 4, '2019-03-23', '2001-03-23'),
-('Lucas Hernandez', 6, '2017-08-09', '2001-08-09'),
-('Mia King', 7, '2016-11-01', '1999-11-01');
+('John Smith', 5, '2018-01-10', '1998-04-19', 'Male', ENCRYPTBYKEY(KEY_GUID('EnvSymmetricKey'), '123-45-6789')),
+('Emily Johnson', 3, '2020-04-15', '1997-04-15', 'Female', ENCRYPTBYKEY(KEY_GUID('EnvSymmetricKey'), '234-56-7890')),
+('Michael Brown', 7, '2016-05-30', '1999-05-30', 'Male', ENCRYPTBYKEY(KEY_GUID('EnvSymmetricKey'), '345-67-8901')),
+('Jessica Davis', 2, '2021-02-20', '1999-02-20', 'Female', ENCRYPTBYKEY(KEY_GUID('EnvSymmetricKey'), '456-78-9012')),
+('Matthew Wilson', 8, '2015-08-11', '1997-08-11', 'Male', ENCRYPTBYKEY(KEY_GUID('EnvSymmetricKey'), '567-89-0123')),
+('Ashley Miller', 4, '2019-07-22', '2001-07-22', 'Female', ENCRYPTBYKEY(KEY_GUID('EnvSymmetricKey'), '678-90-1234')),
+('Christopher Moore', 10, '2013-03-18', '1992-03-18', 'Male', ENCRYPTBYKEY(KEY_GUID('EnvSymmetricKey'), '789-01-2345')),
+('Amanda Taylor', 6, '2017-11-10', '1999-11-10', 'Female', ENCRYPTBYKEY(KEY_GUID('EnvSymmetricKey'), '890-12-3456')),
+('Elizabeth Anderson', 9, '2014-12-05', '1995-12-05', 'Female', ENCRYPTBYKEY(KEY_GUID('EnvSymmetricKey'), '901-23-4567')),
+('Brian Thomas', 1, '2022-06-01', '2004-06-01', 'Male', ENCRYPTBYKEY(KEY_GUID('EnvSymmetricKey'), '012-34-5678')),
+('Sophia Jackson', 3, '2020-09-14', '2001-09-14', 'Female', ENCRYPTBYKEY(KEY_GUID('EnvSymmetricKey'), '210-43-8765')),
+('Ethan White', 2, '2021-08-23', '1999-08-23', 'Male', ENCRYPTBYKEY(KEY_GUID('EnvSymmetricKey'), '321-54-9876')),
+('Madison Harris', 5, '2018-01-07', '1999-01-07', 'Male', ENCRYPTBYKEY(KEY_GUID('EnvSymmetricKey'), '432-65-0987')),
+('Alexander Martin', 6, '2017-04-03', '2000-04-03', 'Male', ENCRYPTBYKEY(KEY_GUID('EnvSymmetricKey'), '543-76-1098')),
+('Olivia Thompson', 4, '2019-10-16', '2001-10-16', 'Female', ENCRYPTBYKEY(KEY_GUID('EnvSymmetricKey'), '654-87-2109')),
+('William Garcia', 7, '2016-02-11', '1999-02-11', 'Male', ENCRYPTBYKEY(KEY_GUID('EnvSymmetricKey'), '765-98-3210')),
+('Isabella Martinez', 8, '2015-05-28', '1997-05-28', 'Other', ENCRYPTBYKEY(KEY_GUID('EnvSymmetricKey'), '876-09-4321')),
+('David Rodriguez', 1, '2022-07-04', '2004-07-04', 'Male', ENCRYPTBYKEY(KEY_GUID('EnvSymmetricKey'), '987-10-5432')),
+('Charlotte Lee', 2, '2021-09-15', '1999-09-15', 'Female', ENCRYPTBYKEY(KEY_GUID('EnvSymmetricKey'), '098-21-6543')),
+('Benjamin Walker', 3, '2020-12-21', '2002-12-21', 'Male', ENCRYPTBYKEY(KEY_GUID('EnvSymmetricKey'), '789-32-7654')),
+('Abigail Hall', 9, '2014-10-30', '1995-10-30', 'Female', ENCRYPTBYKEY(KEY_GUID('EnvSymmetricKey'), '654-43-8765')),
+('Daniel Allen', 5, '2018-06-19', '2000-06-19', 'Other', ENCRYPTBYKEY(KEY_GUID('EnvSymmetricKey'), '321-54-9876')),
+('Emma Young', 4, '2019-03-23', '2001-03-23', 'Female', ENCRYPTBYKEY(KEY_GUID('EnvSymmetricKey'), '432-65-0987')),
+('Lucas Hernandez', 6, '2017-08-09', '2001-08-09', 'Male', ENCRYPTBYKEY(KEY_GUID('EnvSymmetricKey'), '543-76-1098')),
+('Mia King', 7, '2016-11-01', '1999-11-01', 'Female', ENCRYPTBYKEY(KEY_GUID('EnvSymmetricKey'), '654-87-2109'));
 
 
+
+CLOSE SYMMETRIC KEY EnvSymmetricKey;
 
 ----CARETAKER
 INSERT INTO CARETAKER (CARETAKER_ID, PLANT_CARE_SPECIALISATION, EDUCATION_LEVEL) 
 VALUES 
-(1, 'Ornamental Plants', 'Bachelors Degree'),
-(2, 'Tropical Plants', 'Masters Degree'),
+(2, 'Aquatic Plants', 'Masters Degree'),
 (3, 'Desert Plants', 'Bachelors Degree'),
 (4, 'Aquatic Plants', 'College Diploma'),
 (5, 'Ferns', 'PhD'),
-(6, 'Cacti', 'Associate Degree'),
-(7, 'Succulents', 'Bachelors Degree'),
-(8, 'Herbs', 'Masters Degree'),
+(6, 'Aquatic Plants', 'Associate Degree'),
+(7, 'Aquatic Plants', 'Bachelors Degree'),
+(8, 'Shrubs', 'Masters Degree'),
 (9, 'Shrubs', 'High School Diploma'),
 (10, 'Trees', 'Bachelors Degree'),
-(11, 'Flowering Plants', 'College Diploma'),
+(11, 'Aquatic Plants', 'College Diploma'),
 (12, 'Grasses', 'Associate Degree'),
-(13, 'Vines', 'PhD'),
-(14, 'Edible Plants', 'Bachelors Degree'),
-(15, 'Medicinal Plants', 'Masters Degree'),
-(16, 'Orchids', 'Associate Degree'),
-(17, 'Palms', 'High School Diploma'),
-(18, 'Bonsai', 'Bachelors Degree'),
-(19, 'Bulbs', 'College Diploma'),
-(20, 'Fungi', 'Masters Degree'),
-(21, 'Mosses', 'PhD'),
+(13, 'Aquatic Plants', 'PhD'),
+(17, 'Carnivorous Plants', 'High School Diploma'),
 (22, 'Algae', 'Associate Degree'),
-(23, 'Carnivorous Plants', 'Bachelors Degree'),
-(24, 'Gymnosperms', 'High School Diploma'),
-(25, 'Angiosperms', 'College Diploma');
+(23, 'Carnivorous Plants', 'Bachelors Degree');
 
 
 ----SANCTUARY_STAFF
 INSERT INTO SANCTUARY_STAFF (SANCTUARY_STAFF_ID, CERTIFICATION, EDUCATION_AND_TRAINING) 
 VALUES 
-(1, 'Wildlife Management Certification', 'BSc in Environmental Science'),
 (2, 'Endangered Species Specialist', 'MSc in Conservation Biology'),
-(3, 'Habitat Restoration Certificate', 'BSc in Ecology'),
-(4, 'Wildlife Rehabilitation License', 'Diploma in Veterinary Technology'),
-(5, 'Botanical Garden Management', 'MA in Botany'),
 (6, 'Zookeeping Certificate', 'BSc in Zoology'),
-(7, 'Marine Conservation Certificate', 'MS in Marine Biology'),
-(8, 'Ornithology Specialist Certification', 'PhD in Avian Sciences'),
-(9, 'Herpetology Certification', 'BSc in Animal Science'),
-(10, 'Mammalogy Certification', 'MS in Wildlife Biology'),
 (11, 'Wildlife Tracking Certification', 'BSc in Natural Resource Management'),
 (12, 'Conservation Education Certificate', 'MA in Environmental Education'),
 (13, 'Aquatic Habitat Specialist', 'PhD in Aquatic Science'),
-(14, 'Pest Management License', 'BSc in Agriculture'),
 (15, 'Ecotourism Certificate', 'BA in Sustainable Tourism'),
 (16, 'Natural Resource Policy Certificate', 'MSc in Environmental Policy'),
 (17, 'Animal Behavior Specialist', 'PhD in Animal Behavior'),
 (18, 'Wilderness First Aid Certification', 'Certified Wilderness Responder'),
-(19, 'GIS Specialist for Conservation', 'MS in Geographic Information Systems'),
-(20, 'Invasive Species Management Certificate', 'MSc in Ecology'),
 (21, 'Climate Change Analyst Certificate', 'MA in Climate Science'),
 (22, 'Renewable Resources Management', 'BSc in Renewable Resources'),
 (23, 'Forest Conservation Technician', 'Diploma in Forestry'),
@@ -131,26 +115,15 @@ INSERT INTO GUIDE (GUIDE_ID, TRAINING_AND_CERTIFICATIONS)
 VALUES 
 (1, 'Certified Tour Guide, CPR & First Aid'),
 (2, 'Wilderness First Responder, Bird Watching Specialist'),
-(3, 'Cultural Heritage Guide Certification, Multilingual'),
-(4, 'Outdoor Leadership Training, Kayaking Guide'),
 (5, 'Eco-Tourism Certificate, Environmental Educator'),
 (6, 'Nature Interpretation Certificate, Hiking Guide'),
 (7, 'Adventure Guide Diploma, Rock Climbing Instructor'),
 (8, 'Safari Guide Certification, Wildlife Tracking Expert'),
 (9, 'Scuba Diving Instructor, Marine Life Specialist'),
 (10, 'Botanical Tour Guide, Plant Identification Expert'),
-(11, 'Historical Sites Guide, Archival Research Training'),
-(12, 'Astronomy Guide, Telescope Operation Certificate'),
 (13, 'Certified Cave Guide, Spelunking Safety Trainer'),
-(14, 'Snow Sports Guide, Avalanche Safety Certified'),
 (15, 'Rafting Guide Certification, Swiftwater Rescue Trained'),
-(16, 'Photography Tour Guide, Professional Photographer'),
-(17, 'Food and Wine Tour Specialist, Culinary Background'),
-(18, 'Art Tour Guide, Degree in Art History'),
-(19, 'Urban Exploration Guide, Architectural Knowledge'),
-(20, 'Geology Tour Guide, Earth Science Degree'),
 (21, 'Certified Bicycle Tour Guide, Bike Mechanic Skills'),
-(22, 'Museum Guide, Curatorial Training'),
 (23, 'Wildlife Safari Leader, Zoology Degree'),
 (24, 'Climbing Guide, Certified in Mountain Safety'),
 (25, 'Fishing Guide, Deep Sea Fishing Expert');
@@ -163,26 +136,15 @@ VALUES
 (1, 'Beginner Level'),
 (2, 'Intermediate Level'),
 (3, 'Advanced Level'),
-(4, 'Professional Level'),
-(5, 'Youth Level'),
-(6, 'College Level'),
-(7, 'High School Level'),
-(8, 'Community Level'),
-(9, 'Amateur Level'),
-(10, 'Semi-Pro Level'),
-(11, 'Pro Level'),
-(12, 'National Level'),
-(13, 'International Level'),
-(14, 'Olympic Level'),
-(15, 'Recreational Level'),
-(16, 'Junior Level'),
-(17, 'Senior Level'),
-(18, 'Master Level'),
-(19, 'Local League Level'),
-(20, 'Regional Level'),
-(21, 'State Level'),
-(22, 'National Tournament Level'),
-(23, 'Expert Level'),
+(5, 'Beginner Level'),
+(7, 'Beginner Level'),
+(10, 'Beginner Level'),
+(12, 'Intermediate Level'),
+(13, 'Intermediate Level'),
+(23, 'Intermediate Level'),
+(14, 'Advanced Level'),
+(15, 'Advanced Level'),
+(16, 'Advanced Level'),
 (24, 'Assistant Coach Level'),
 (25, 'Head Coach Level');
 
@@ -190,38 +152,38 @@ VALUES
 ----HABITAT
 INSERT INTO HABITAT (Habitat_Id, Sanctuary_Id, Habitat_Type, Habitat_Size, PH_Level, Soil_Fertility, Air_Purity, Humidity, Temperature)
 VALUES
-  (1, 1, 'Evergreen Forest', 500.25, 6.8, 'Rich Loam', 25.5, 70.2, 22.5),
-  (2, 2, 'Mountain Cave', 800.30, 7.2, 'Rocky Soil', 21.8, 65.5, 18.7),
-  (3, 3, 'Riverside Marshland', 700.20, 6.5, 'Silty Soil', 28.3, 75.0, 24.0),
-  (4, 4, 'Meadow Grassland', 450.75, 6.9, 'Fertile Soil', 23.0, 68.5, 20.5),
-  (5, 5, 'Coastal Mangrove', 1000.50, 7.5, 'Sandy Soil', 26.5, 72.8, 23.2),
-  (6, 6, 'Canyon Cliffs', 1200.75, 7.8, 'Loamy Soil', 20.2, 60.0, 17.5),
-  (7, 7, 'Plateau Grasslands', 900.40, 6.7, 'Silt Loam', 24.8, 71.5, 21.8),
-  (8, 8, 'Desert Oasis', 650.60, 7.0, 'Sandy Loam', 29.5, 78.2, 26.0),
-  (9, 9, 'Tropical Rainforest Canopy', 1100.20, 6.4, 'Humus-Rich Soil', 22.5, 67.5, 19.5),
-  (10, 10, 'Island Biotic Zone', 750.80, 7.3, 'Volcanic Soil', 27.0, 74.5, 24.8),
-  (11, 11, 'Grassland Prairie', 500.45, 6.6, 'Prairie Soil', 23.8, 69.2, 21.0),
-  (12, 12, 'Pine Forest Canopy', 950.55, 7.1, 'Coniferous Soil', 21.0, 64.8, 18.2),
-  (13, 13, 'Canyon Oasis', 1300.90, 7.4, 'Silty Sand', 19.5, 59.8, 16.5),
-  (14, 14, 'Lakefront Wetlands', 850.35, 6.8, 'Marshy Soil', 25.2, 70.8, 22.0),
-  (15, 15, 'Savannah Grasslands', 800.25, 7.2, 'Savannah Soil', 20.7, 63.5, 17.8),
-  (16, 16, 'Mountain Summit Alpine', 700.70, 6.5, 'Alpine Soil', 27.5, 76.0, 25.2),
-  (17, 17, 'Wooded Glade', 450.80, 6.9, 'Woodland Soil', 23.5, 68.0, 20.0),
-  (18, 18, 'Riverbank Ecosystem', 600.95, 7.7, 'Riverbank Soil', 26.0, 73.2, 23.5),
-  (19, 19, 'Biosphere Rainforest', 950.40, 6.3, 'Biosphere Soil', 21.2, 66.5, 18.5),
-  (20, 20, 'Polar Tundra', 550.30, 7.0, 'Tundra Soil', 28.0, 77.5, 25.5),
-  (21, 21, 'Wetland Biotic Zone', 650.65, 6.6, 'Wetland Soil', 24.0, 72.0, 21.2),
-  (22, 22, 'Cliffside Biotic Zone', 900.20, 7.3, 'Cliffside Soil', 22.8, 67.8, 19.8),
-  (23, 23, 'Golden Sands Coastal', 1050.75, 7.8, 'Sandy Loam', 20.5, 62.5, 17.0),
-  (24, 24, 'Antarctic Iceberg', 1200.80, 6.7, 'Iceberg Soil', 19.0, 59.0, 16.2),
-  (25, 25, 'High Altitude Plateau', 1100.50, 6.4, 'Plateau Soil', 21.5, 66.0, 18.0);
+  (1, 10, 'Wetland', 500.25, 6.8, 'Rich Loam', 85.0, 60.0, 28.5),
+  (2, 1, 'Rainforest', 800.30, 7.2, 'Rocky Soil', 75.0, 65.5, 28.0),
+  (3, 3, 'Wetland', 700.20, 6.5, 'Silty Soil', 80.0, 60.0, 22.0),
+  (4, 4, 'High Altitude Plateau', 450.75, 6.9, 'Fertile Soil', 85.0, 40.0, 30.0),
+  (5, 5, 'Rainforest', 1000.50, 7.5, 'Sandy Soil', 70.0, 55.0, 22.5),
+  (6, 6, 'Wetland', 1200.75, 7.8, 'Loamy Soil', 75.0, 45.0, 29.0),
+  (7, 7, 'High Altitude Plateau', 900.40, 6.7, 'Silt Loam', 80.0, 55.5, 26.5),
+  (8, 8, 'Wetland', 650.60, 7.0, 'Sandy Loam', 85.0, 60.0, 28.5),
+  (9, 9, 'Rainforest', 1100.20, 6.4, 'Humus-Rich Soil', 70.0, 65.0, 24.5),
+  (10, 10, 'Wetland', 750.80, 7.3, 'Volcanic Soil', 75.0, 50.0, 21.8),
+  (11, 1, 'Wetland', 500.45, 6.6, 'Prairie Soil', 80.0, 55.0, 26.0),
+  (12, 2, 'Rainforest', 950.55, 7.1, 'Coniferous Soil', 70.0, 60.0, 23.2),
+  (13, 3, 'Wetland', 1300.90, 7.4, 'Silty Sand', 75.0, 50.5, 20.5),
+  (14, 4, 'Wetland', 850.35, 6.8, 'Marshy Soil', 80.0, 65.0, 27.0),
+  (15, 5, 'Rainforest', 800.25, 7.2, 'Savannah Soil', 70.0, 45.0, 28.8),
+  (16, 6, 'High Altitude Plateau', 700.70, 6.5, 'Alpine Soil', 75.0, 55.5, 25.5),
+  (17, 7, 'Wetland', 450.80, 6.9, 'Woodland Soil', 80.0, 60.5, 20.2),
+  (18, 8, 'Wetland', 600.95, 7.7, 'Riverbank Soil', 26.0, 73.2, 23.5),
+  (19, 9, 'Rainforest', 950.40, 6.3, 'Biosphere Soil', 21.2, 66.5, 18.5),
+  (20, 2, 'High Altitude Plateau', 550.30, 7.0, 'Tundra Soil', 28.0, 77.5, 25.5),
+  (21, 1, 'Wetland', 650.65, 6.6, 'Wetland Soil', 24.0, 72.0, 21.2),
+  (22, 2, 'High Altitude Plateau', 900.20, 7.3, 'Cliffside Soil', 22.8, 67.8, 19.8),
+  (23, 3, 'Wetland', 1050.75, 7.8, 'Sandy Loam', 20.5, 62.5, 17.0),
+  (24, 4, 'High Altitude Plateau', 1200.80, 6.7, 'Iceberg Soil', 19.0, 59.0, 16.2),
+  (25, 5, 'Wetland', 1100.50, 6.4, 'Plateau Soil', 21.5, 66.0, 18.0);
 
 
 
 ----FLORA
 INSERT INTO FLORA (Flora_Id, Caretaker_Id, Species)
 VALUES
-  (1, 1, 'Rose'),
+  (1, 2, 'Rose'),
   (2, 2, 'Orchid'),
   (3, 3, 'Cactus'),
   (4, 4, 'Water Lily'),
@@ -234,18 +196,18 @@ VALUES
   (11, 11, 'Sunflower'),
   (12, 12, 'Bamboo'),
   (13, 13, 'Ivy'),
-  (14, 14, 'Tomato Plant'),
-  (15, 15, 'Echinacea'),
-  (16, 16, 'Bonsai Tree'),
+  (14, 4, 'Tomato Plant'),
+  (15, 5, 'Echinacea'),
+  (16, 6, 'Bonsai Tree'),
   (17, 17, 'Palm Tree'),
-  (18, 18, 'Bonsai'),
-  (19, 19, 'Tulip'),
-  (20, 20, 'Mushroom'),
-  (21, 21, 'Moss'),
-  (22, 22, 'Algae Bloom'),
-  (23, 23, 'Venus Flytrap'),
-  (24, 24, 'Pine Tree'),
-  (25, 25, 'Rosemary');
+  (18, 8, 'Bonsai'),
+  (19, 9, 'Tulip'),
+  (20, 22, 'Mushroom'),
+  (21, 23, 'Moss'),
+  (22, 4, 'Algae Bloom'),
+  (23, 3, 'Venus Flytrap'),
+  (24, 7, 'Pine Tree'),
+  (25, 5, 'Rosemary');
 
 
 ----FLORA_HABITAT
@@ -283,28 +245,17 @@ INSERT INTO VET (VET_ID, LICENSE_NUMBER, YEARS_OF_EXPERIENCE, SPECIALISATION)
 VALUES 
 (1, 123456, 10, 'General Practitioner'),
 (2, 123457, 8, 'Surgeon'),
-(3, 123458, 5, 'Surgeon'),
 (4, 123459, 7, 'Cardiology'),
 (5, 123460, 6, 'General Practitioner'),
-(6, 123461, 9, 'General Practitioner'),
 (7, 123462, 3, 'Cardiology'),
-(8, 123463, 2, 'Radiology'),
 (9, 123464, 4, 'General Practitioner'),
 (10, 123465, 11, 'General Practitioner'),
 (11, 123466, 15, 'Surgeon'),
-(12, 123467, 13, 'Neurology'),
-(13, 123468, 12, 'General Practitioner'),
 (14, 123469, 14, 'Radiology'),
-(15, 123470, 20, 'Surgeon'),
-(16, 123471, 17, 'Radiology'),
-(17, 123472, 16, 'General Practitioner'),
 (18, 123473, 19, 'Surgeon'),
 (19, 123474, 18, 'Radiology'),
-(20, 123475, 7, 'Cardiology'),
 (21, 123476, 5, 'Radiology'),
-(22, 123477, 8, 'Surgeon'),
 (23, 123478, 4, 'General Practitioner'),
-(24, 123479, 3, 'Radiology'),
 (25, 123480, 22, 'General Practitioner');
 
 
@@ -314,28 +265,28 @@ INSERT INTO WILDLIFE (VET_ID, Wildlife_Type, Population, Species)
 VALUES
   (1, 'Carnivore', 100, 'Lion'),
   (2, 'Herbivore', 200, 'Elephant'),
-  (3, 'Omnivore', 50, 'Bear'),
+  (25, 'Omnivore', 50, 'Bear'),
   (4, 'Carnivore', 75, 'Tiger'),
   (5, 'Herbivore', 150, 'Giraffe'),
-  (6, 'Omnivore', 30, 'Raccoon'),
+  (23, 'Omnivore', 30, 'Raccoon'),
   (7, 'Carnivore', 80, 'Leopard'),
-  (8, 'Herbivore', 120, 'Hippopotamus'),
+  (21, 'Herbivore', 120, 'Hippopotamus'),
   (9, 'Omnivore', 40, 'Fox'),
   (10, 'Carnivore', 60, 'Cheetah'),
   (11, 'Herbivore', 180, 'Zebra'),
-  (12, 'Omnivore', 35, 'Panda'),
-  (13, 'Carnivore', 90, 'Jaguar'),
+  (19, 'Omnivore', 35, 'Panda'),
+  (14, 'Carnivore', 90, 'Jaguar'),
   (14, 'Herbivore', 220, 'Rhino'),
-  (15, 'Omnivore', 45, 'Opossum'),
-  (16, 'Carnivore', 70, 'Panther'),
-  (17, 'Herbivore', 130, 'Kangaroo'),
+  (18, 'Omnivore', 45, 'Opossum'),
+  (14, 'Carnivore', 70, 'Panther'),
+  (19, 'Herbivore', 130, 'Kangaroo'),
   (18, 'Omnivore', 55, 'Badger'),
   (19, 'Carnivore', 85, 'Hyena'),
-  (20, 'Herbivore', 160, 'Gorilla'),
+  (21, 'Herbivore', 160, 'Gorilla'),
   (21, 'Omnivore', 25, 'Raven'),
-  (22, 'Carnivore', 95, 'Cougar'),
+  (2, 'Carnivore', 95, 'Cougar'),
   (23, 'Herbivore', 140, 'Wildebeest'),
-  (24, 'Omnivore', 48, 'Coati'),
+  (4, 'Omnivore', 48, 'Coati'),
   (25, 'Carnivore', 65, 'Lynx');
  
 
