@@ -1,3 +1,7 @@
+# Habitat page
+
+#----------------------------------------------------------------------------------------------------------
+# Importing libraries
 import streamlit as st
 import random
 import os
@@ -6,6 +10,7 @@ import sqlite3
 import pandas as pd
 import base64
 
+#----------------------------------------------------------------------------------------------------------
 #setting background 
 def set_background():
     bin_file = "./data/habitat.png"
@@ -22,6 +27,7 @@ def set_background():
     ''' % bin_str
     st.markdown(page_bg_img, unsafe_allow_html=True)
 
+#----------------------------------------------------------------------------------------------------------
 # Function to fetch data from the HABITAT table
 def fetch_habitat_data(habitat_type):
     conn = sqlite3.connect("./sql/wildlife.db")
@@ -30,6 +36,7 @@ def fetch_habitat_data(habitat_type):
     conn.close()
     return habitat_data
 
+#----------------------------------------------------------------------------------------------------------
 # Function to fetch flora data based on the habitat type
 def fetch_flora_data(habitat_type):
     conn = sqlite3.connect("./sql/wildlife.db")
@@ -38,6 +45,7 @@ def fetch_flora_data(habitat_type):
     conn.close()
     return flora_data
 
+#----------------------------------------------------------------------------------------------------------
 # Function to fetch wildlife data based on the habitat type
 def fetch_wildlife_data(habitat_type):
     conn = sqlite3.connect("./sql/wildlife.db")
@@ -46,19 +54,18 @@ def fetch_wildlife_data(habitat_type):
     conn.close()
     return wildlife_data
 
+#----------------------------------------------------------------------------------------------------------
+# Funtionality of the whole page
 def habitat_page():
     st.title("Habitat Page")
     set_background()
-    # Select a habitat type
     habitat_type_options = ["Select Habitat Type", "Wetland", "Rainforest", "High Altitude Plateau"]
     habitat_type = st.selectbox("Select Habitat Type", habitat_type_options)
-
-    # Check if the user selected a valid habitat type
     if habitat_type == "Select Habitat Type":
         st.warning("Please select a habitat type.")
         return
 
-    # Fetch and display climatic conditions for the selected habitat type
+    # Fetching the climatic conditions for the selected habitat type
     habitat_data = fetch_habitat_data(habitat_type)
     st.subheader("Climatic Conditions")
     st.write(f"pH Level: {habitat_data['PH_Level'].values[0]}, "
@@ -67,7 +74,7 @@ def habitat_page():
              f"Air Purity: {habitat_data['Air_Purity'].values[0]}%, "
              f"Soil Fertility: {habitat_data['Soil_Fertility'].values[0]}")
 
-    # Choose between flora and fauna
+    # Option to choose between flora and fauna
     category = st.radio("Select Category", ["Flora", "Wildlife"])
 
     # Display flora or wildlife data based on the selected category and habitat type
@@ -82,6 +89,6 @@ def habitat_page():
         for index, row in wildlife_data.iterrows():
             st.write(f"Species: {row['Species']}, Type: {row['Wildlife_Type']}, Population: {row['Population']}")
 
-# Run the app
+
 if __name__ == "__main__":
     habitat_page()

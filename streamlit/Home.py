@@ -1,8 +1,11 @@
+#Homepage
+#----------------------------------------------------------------------------------------------------------
+# Importing libraries
 import streamlit as st 
 import base64
 from pages import EmployeeLogin, Habitat, OutreachProgram, TouristLogin
 
-
+#----------------------------------------------------------------------------------------------------------
 # Function to set up the background image
 def set_background():
     bin_file = "./data/main.png"
@@ -19,19 +22,18 @@ def set_background():
     ''' % bin_str
     st.markdown(page_bg_img, unsafe_allow_html=True)
 
+#----------------------------------------------------------------------------------------------------------
 # Function to set up the Home page
 def home():
     set_background()
     st.write("# Welcome 👋")
-    # Add other content for the Home page as needed
 
+#----------------------------------------------------------------------------------------------------------
 # Function to handle different pages
 def main():
     set_background()
-    # Get the current page from the URL query parameters
     current_page = st.experimental_get_query_params().get("page", ["Home"])[0]
 
-    # Define the pages
     pages = {
         "Home": home,
         "EmployeeLogin": EmployeeLogin.employee_login,
@@ -40,11 +42,9 @@ def main():
         "TouristLogin": TouristLogin.tourist_login_page,
     }
 
-    # Display the current page
     if current_page in pages:
         pages[current_page]()
     else:
-        # If current_page is not in the pages dictionary, redirect to the default page ("Home")
         default_page = "Home"
         st.experimental_set_query_params(page=default_page)
         pages[default_page]()

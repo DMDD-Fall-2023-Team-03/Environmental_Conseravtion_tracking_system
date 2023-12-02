@@ -1,9 +1,14 @@
+# Outreach_Program page
+
+#----------------------------------------------------------------------------------------------------------
+# Importing libraries
 import streamlit as st
 import sqlite3
 from datetime import datetime, timedelta
 import re
 import base64
 
+#----------------------------------------------------------------------------------------------------------
 #setting background 
 def set_background():
     bin_file = "./data/outreach.png"
@@ -20,10 +25,13 @@ def set_background():
     ''' % bin_str
     st.markdown(page_bg_img, unsafe_allow_html=True)
 
-# Establish a connection to the SQLite database
+#----------------------------------------------------------------------------------------------------------
+# Function to initailse connection to db
 conn = sqlite3.connect("./sql/wildlife.db")
 cursor = conn.cursor()
 
+#----------------------------------------------------------------------------------------------------------
+# Function to get the program details
 def get_program_details(organization_type):
     cursor.execute("""
         SELECT Program_Id, Organisation_Name, Program_Period
@@ -32,34 +40,33 @@ def get_program_details(organization_type):
     """, (organization_type,))
     return cursor.fetchall()
 
+#----------------------------------------------------------------------------------------------------------
+# Function to get program duration
 def get_program_duration(program_id):
     cursor.execute("SELECT Program_Period FROM OUTREACH_PROGRAM WHERE Program_Id = ?", (program_id,))
     result = cursor.fetchone()
     return result[0] if result else None
 
+#----------------------------------------------------------------------------------------------------------
+# Funtion to generate start date and end date of the program based on the program duration
 def generate_dates(program_duration):
     start_date = datetime.now() + timedelta(days=1)
     end_date = start_date + timedelta(days=program_duration)
     return start_date, end_date
 
+#----------------------------------------------------------------------------------------------------------
+# Function to display the whole page 
 def outreach_programs_page():
     st.title("Outreach Programs")
     set_background()
-    
-    # Get organization types from the database
     cursor.execute("SELECT DISTINCT Organisation_Type FROM OUTREACH_PROGRAM")
     organization_types = [row[0] for row in cursor.fetchall()]
     selected_organization_type = st.selectbox("Select Organization Type", organization_types)
-
-    # Get program details based on the selected organization type
     program_details = get_program_details(selected_organization_type)
     program_names = [f"{row[1]} (ID: {row[0]})" for row in program_details]
     selected_program_name = st.selectbox("Select Program", program_names)
-
-    # Extract program_id from the selected program name
     selected_program_id = int(selected_program_name.split("(ID: ")[1][:-1])
 
-    # Display program details
     program_duration = get_program_duration(selected_program_id)
     start_date, end_date = generate_dates(program_duration)
 
@@ -91,6 +98,8 @@ def outreach_programs_page():
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")
 
+#----------------------------------------------------------------------------------------------------------
+# Function to save the above sign-up details
 def save_signup_details(program_id, org_name, first, last, contact, affiliated):
     # Get the next available Volunteer_ID
     cursor.execute("SELECT MAX(Volunteer_ID) FROM VOLUNTEER")
@@ -103,12 +112,9 @@ def save_signup_details(program_id, org_name, first, last, contact, affiliated):
         VALUES (?, ?, ?, ?, ?)
     """, (next_volunteer_id, program_id, f"{first} {last}", datetime.now().strftime('%Y-%m-%d'), datetime.now().strftime('%Y-%m-%d')))
     
-    conn.commit()  # Commit the changes to the database
+    conn.commit()  
 
-
-# Run the app
 if __name__ == "__main__":
     outreach_programs_page()
 
-# Close the database connection when done
 conn.close()

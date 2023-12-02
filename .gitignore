@@ -1,0 +1,9 @@
+# .gitignore
+DMDD/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+streamlit/pages/__pycache__/
+*.pyc
