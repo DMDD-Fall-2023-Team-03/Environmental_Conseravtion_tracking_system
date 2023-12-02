@@ -1,66 +1,144 @@
-# pages/TouristLogin.py
-# TouristLogin.py
-
 import streamlit as st
-import os
+import sqlite3
 from datetime import datetime
+import base64
 
-# Function to save new user information to a text file
-def save_new_user_info(first_name, last_name, mobile_number, username, password):
-    data_folder = "./data/Tourist"
-    os.makedirs(data_folder, exist_ok=True)
-    file_path = os.path.join(data_folder, "tourist_database.txt")
+#setting background 
+def set_background():
+    bin_file = "./data/tourist.png"
+    with open(bin_file, 'rb') as f:
+        data = f.read()
+    bin_str = base64.b64encode(data).decode()
+    page_bg_img = '''
+        <style>
+        .stApp {
+            background-image: url("data:image/png;base64,%s");
+            background-size: cover;
+        }
+        </style>
+    ''' % bin_str
+    st.markdown(page_bg_img, unsafe_allow_html=True)
 
-    with open(file_path, "a") as file:
-        file.write(f"{first_name},{last_name},{mobile_number},{username},{password}\n")
+# Establish a connection to the SQLite database
+conn = sqlite3.connect("./sql/wildlife.db")
+cursor = conn.cursor()
 
-# Function to save feedback information to a text file
-def save_feedback_info(username, date_of_last_visit, guide_name, feedback, star_ratings):
-    data_folder = "./data/Tourist"
-    os.makedirs(data_folder, exist_ok=True)
-    file_path = os.path.join(data_folder, "feedback_database.txt")
+# Function to save feedback information to the VISITS table
+def save_feedback_info(tourist_name, date_of_visit, feedback):
+    # Get Tourist_Id using the provided Tourist_Name
+    cursor.execute("SELECT Tourist_Id FROM TOURIST WHERE Tourist_Name = ?", (tourist_name,))
+    tourist_id = cursor.fetchone()
 
-    with open(file_path, "a") as file:
-        file.write(f"{username},{date_of_last_visit},{guide_name},{feedback},{star_ratings}\n")
+    if tourist_id:
+        tourist_id = tourist_id[0]
 
-# Tourist Login Page
+        # Check if the tourist has previous visits
+        cursor.execute("""
+            SELECT Date_of_Visit, Feedback
+            FROM VISITS
+            WHERE Tourist_Id = ?
+            ORDER BY Date_of_Visit DESC
+            LIMIT 1
+        """, (tourist_id,))
+        previous_visit = cursor.fetchone()
+
+        if previous_visit:
+            st.write(f"Previous Visit Date: {previous_visit[0]}")
+            st.write(f"Previous Feedback: {previous_visit[1]}")
+
+            # Ask if the tourist wants to update the date and feedback
+            update_info = st.checkbox("Update Date and Feedback")
+
+            if update_info:
+                # Update the date and feedback in the VISITS table
+                cursor.execute("""
+                    UPDATE VISITS
+                    SET Date_of_Visit = ?, Feedback = ?
+                    WHERE Tourist_Id = ?
+                """, (date_of_visit, feedback, tourist_id))
+                conn.commit()
+                st.success("Visit information updated successfully!")
+            else:
+                st.info("No changes made.")
+        else:
+            # Insert new visit information into the VISITS table
+            cursor.execute("""
+                INSERT INTO VISITS (Tourist_Id, Date_of_Visit, Feedback)
+                VALUES (?, ?, ?)
+            """, (tourist_id, date_of_visit, feedback))
+            conn.commit()
+            st.success("Feedback submitted successfully!")
+
+    else:
+        st.error("Tourist not found.")
+
+# ...
+
 def tourist_login_page():
     st.title("Tourist Login Page")
+    set_background()
+    st.header("User Data")
 
-    # Option to select new user registration or returning user login
-    user_option = st.radio("Choose an option", ("New User Registration", "Returning User Login"))
+    # Collect information for returning user
+    tourist_name = st.text_input("Tourist Name")
 
-    if user_option == "New User Registration":
-        st.header("New User Registration")
-        first_name = st.text_input("First Name")
-        last_name = st.text_input("Last Name")
-        mobile_number = st.text_input("Mobile Number")
-        username = st.text_input("Username")
-        password = st.text_input("Password", type="password", help="Choose a secure password")
+    # Check if the tourist has previous visits
+    cursor.execute("SELECT Tourist_Id FROM TOURIST WHERE Tourist_Name = ?", (tourist_name,))
+    tourist_id = cursor.fetchone()
 
-        if st.button("Register"):
-            save_new_user_info(first_name, last_name, mobile_number, username, password)
-            st.success("Registration Successful! You can now log in.")
+    # date_of_visit_default = None
+    # feedback_default = None
 
-    elif user_option == "Returning User Login":
-        st.header("Returning User Login")
+    if tourist_id:
+        tourist_id = tourist_id[0]
 
-        # Collect information for returning user
-        username = st.text_input("Username")
-        date_of_last_visit = st.date_input("Date of Last Visit", min_value=datetime(1900, 1, 1), max_value=datetime.today())
-        guide_name = st.text_input("Guide Name")
+        cursor.execute("""
+            SELECT Date_of_Visit, Feedback
+            FROM VISITS
+            WHERE Tourist_Id = ?
+            ORDER BY Date_of_Visit DESC
+            LIMIT 1
+        """, (tourist_id,))
+        previous_visit = cursor.fetchone()
 
-        # Text box for writing feedback
-        feedback = st.text_area("Write your feedback here")
+        date_of_visit_default = None
+        feedback_default = None
 
-        # Option to give star ratings
-        star_ratings = st.slider("Star Ratings", min_value=1, max_value=5, value=3)
+        if previous_visit:
+            date_of_visit = datetime.strptime(previous_visit[0], "%Y-%m-%d")
+            feedback = previous_visit[1]
 
-        if st.button("Submit Feedback"):
-            save_feedback_info(username, date_of_last_visit, guide_name, feedback, star_ratings)
-            st.success("Feedback submitted successfully!")
+            st.write(f"Previous Visit Date: {date_of_visit.strftime('%Y-%m-%d')}")
+            st.write(f"Previous Feedback: {feedback}")
+
+        # Use None as the default value for date_of_visit and feedback
+        date_of_visit = st.date_input("Date of Visit", min_value=datetime(1900, 1, 1), max_value=datetime.today(), value=date_of_visit_default)
+        feedback = st.text_area("Write your feedback here", value=feedback_default)
+
+        update_info = st.button("Update Date and Feedback")
+
+        if update_info:
+            # Update the date and feedback in the VISITS table
+            cursor.execute("""
+                UPDATE VISITS
+                SET Date_of_Visit = ?, Feedback = ?
+                WHERE Tourist_Id = ?
+            """, (date_of_visit.strftime('%Y-%m-%d'), feedback, tourist_id))
+            conn.commit()
+            st.success("Visit information updated successfully!")
+
+        else:
+            st.info("No changes made.")
+
+    elif tourist_name:
+        st.error("Tourist not found.")
+
+
 
 
 # Run the Tourist Login page
 if __name__ == "__main__":
     tourist_login_page()
+
+# Close the database connection when done
+conn.close()

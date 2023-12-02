@@ -2,81 +2,85 @@ import streamlit as st
 import random
 import os
 from PIL import Image
+import sqlite3
+import pandas as pd
+import base64
 
-# Simulated database for flora species
-flora_database = {
-    1: {"species": "Flower1", "description": "Description for Flower1"},
-    2: {"species": "Flower2", "description": "Description for Flower2"},
-    # Add more flora records as needed
-}
+#setting background 
+def set_background():
+    bin_file = "./data/habitat.png"
+    with open(bin_file, 'rb') as f:
+        data = f.read()
+    bin_str = base64.b64encode(data).decode()
+    page_bg_img = '''
+        <style>
+        .stApp {
+            background-image: url("data:image/png;base64,%s");
+            background-size: cover;
+        }
+        </style>
+    ''' % bin_str
+    st.markdown(page_bg_img, unsafe_allow_html=True)
 
-# Simulated database for fauna species
-fauna_database = {
-    1: {"species": "Animal1", "description": "Description for Animal1"},
-    2: {"species": "Animal2", "description": "Description for Animal2"},
-    # Add more fauna records as needed
-}
+# Function to fetch data from the HABITAT table
+def fetch_habitat_data(habitat_type):
+    conn = sqlite3.connect("./sql/wildlife.db")
+    query = f"SELECT * FROM HABITAT WHERE Habitat_Type = '{habitat_type}'"
+    habitat_data = pd.read_sql_query(query, conn)
+    conn.close()
+    return habitat_data
 
-def get_random_flora_image():
-    flora_folder = "./data/Flora"
-    flora_images = [os.path.join(flora_folder, file) for file in os.listdir(flora_folder) if not file.startswith('.')]
-    return random.choice(flora_images)
+# Function to fetch flora data based on the habitat type
+def fetch_flora_data(habitat_type):
+    conn = sqlite3.connect("./sql/wildlife.db")
+    query = f"SELECT * FROM FLORA WHERE Habitat_Type = '{habitat_type}'"
+    flora_data = pd.read_sql_query(query, conn)
+    conn.close()
+    return flora_data
 
-def get_random_fauna_image():
-    fauna_folder = "./data/Fauna"
-    fauna_images = [os.path.join(fauna_folder, file) for file in os.listdir(fauna_folder) if not file.startswith('.')]
-    return random.choice(fauna_images)
-
-def get_random_flora_data():
-    # Fetch a random flora record from the database
-    random_key = random.choice(list(flora_database.keys()))
-    return flora_database[random_key]
-
-def get_random_fauna_data():
-    # Fetch a random fauna record from the database
-    random_key = random.choice(list(fauna_database.keys()))
-    return fauna_database[random_key]
-
-def get_random_climatic_conditions():
-    # Replace this with your logic to fetch random climatic conditions
-    climatic_conditions = "Temperature: 25°C, Humidity: 60%, Rainfall: 10mm"
-    return climatic_conditions
+# Function to fetch wildlife data based on the habitat type
+def fetch_wildlife_data(habitat_type):
+    conn = sqlite3.connect("./sql/wildlife.db")
+    query = f"SELECT * FROM WILDLIFE WHERE Habitat_Type = '{habitat_type}'"
+    wildlife_data = pd.read_sql_query(query, conn)
+    conn.close()
+    return wildlife_data
 
 def habitat_page():
     st.title("Habitat Page")
+    set_background()
+    # Select a habitat type
+    habitat_type_options = ["Select Habitat Type", "Wetland", "Rainforest", "High Altitude Plateau"]
+    habitat_type = st.selectbox("Select Habitat Type", habitat_type_options)
 
-    # Select a zone
-    zone = st.selectbox("Select Zone", range(1, 11))
+    # Check if the user selected a valid habitat type
+    if habitat_type == "Select Habitat Type":
+        st.warning("Please select a habitat type.")
+        return
 
-    # Display random climatic conditions
+    # Fetch and display climatic conditions for the selected habitat type
+    habitat_data = fetch_habitat_data(habitat_type)
     st.subheader("Climatic Conditions")
-    climatic_conditions = get_random_climatic_conditions()
-    st.write(climatic_conditions)
-    
+    st.write(f"pH Level: {habitat_data['PH_Level'].values[0]}, "
+             f"Temperature: {habitat_data['Temperature'].values[0]}°C, "
+             f"Humidity: {habitat_data['Humidity'].values[0]}%, "
+             f"Air Purity: {habitat_data['Air_Purity'].values[0]}%, "
+             f"Soil Fertility: {habitat_data['Soil_Fertility'].values[0]}")
+
     # Choose between flora and fauna
-    category = st.radio("Select Category", ["Flora", "Fauna"])
+    category = st.radio("Select Category", ["Flora", "Wildlife"])
 
-    # Display random flora/fauna data
+    # Display flora or wildlife data based on the selected category and habitat type
     if category == "Flora":
-        st.subheader("Flora Species")
-        flora_data = get_random_flora_data()
-        st.write(f"Species: {flora_data['species']}")
-        st.write(f"Description: {flora_data['description']}")
-        image_path = get_random_flora_image()
+        st.subheader(f"{habitat_type} Flora Species")
+        flora_data = fetch_flora_data(habitat_type)
+        for index, row in flora_data.iterrows():
+            st.write(f"Species: {row['Species']}")
     else:
-        st.subheader("Fauna Species")
-        fauna_data = get_random_fauna_data()
-        st.write(f"Species: {fauna_data['species']}")
-        st.write(f"Description: {fauna_data['description']}")
-        image_path = get_random_fauna_image()
-
-    # Display random image from the selected category
-    st.subheader("Random Image")
-    try:
-        image = Image.open(image_path)
-        st.image(image, caption="Random Image", use_column_width=True)
-    except Exception as e:
-        st.warning(f"Error loading image: {e}")
+        st.subheader(f"{habitat_type} Wildlife Species")
+        wildlife_data = fetch_wildlife_data(habitat_type)
+        for index, row in wildlife_data.iterrows():
+            st.write(f"Species: {row['Species']}, Type: {row['Wildlife_Type']}, Population: {row['Population']}")
 
 # Run the app
 if __name__ == "__main__":
